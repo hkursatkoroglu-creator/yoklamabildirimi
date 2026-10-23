@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1f4e5f">
+<title>Yoklama</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f4e5f'/%3E%3Cpath d='M16 33l11 11 22-24' fill='none' stroke='%23fff' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%231f4e5f'/%3E%3Cpath d='M16 33l11 11 22-24' fill='none' stroke='%23fff' stroke-width='8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Yoklama">
+<style>
+:root{--bg:#f3f5f6;--card:#fff;--ink:#16252b;--mute:#5b6b72;--line:#d5dde0;--pri:#1f4e5f;--onpri:#fff;--ok:#1d7a4d;--bad:#b3261e;--badbg:#fde8e6;--okbg:#e6f4ec}
+@media (prefers-color-scheme:dark){:root:not([data-theme=light]){--bg:#0f1a1e;--card:#18262c;--ink:#e8eff1;--mute:#9db0b7;--line:#2c3e45;--pri:#6cb7cf;--onpri:#0b1519;--ok:#5fd09a;--bad:#ff8a80;--badbg:#3a1f1d;--okbg:#17352a}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top,0) 0 calc(72px + env(safe-area-inset-bottom,0)) 0}
+main{max-width:640px;margin:0 auto;padding:12px}
+h1{font-size:1.25rem;margin:4px 0 12px}h2{font-size:1.05rem;margin:0 0 8px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+button,select,input[type=text],input[type=tel]{font:inherit;color:inherit}
+.btn{min-height:48px;padding:0 16px;border-radius:10px;border:1px solid var(--pri);background:var(--pri);color:var(--onpri);font-weight:600;cursor:pointer}
+.btn.sec{background:transparent;color:var(--pri)}
+.btn.bad{background:transparent;color:var(--bad);border-color:var(--bad)}
+.btn.wide{width:100%}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}
+:focus-visible{outline:3px solid var(--pri);outline-offset:2px}
+.classes{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.cls{flex:1 0 70px;min-height:52px;border-radius:10px;border:2px solid var(--line);background:var(--card);font-size:1.1rem;font-weight:700;cursor:pointer}
+.cls.on{border-color:var(--pri);background:var(--pri);color:var(--onpri)}
+.bar{position:sticky;top:env(safe-area-inset-top,0);z-index:5;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;font-weight:700}
+.bar .g{color:var(--ok)}.bar .a{color:var(--bad)}
+.stu{display:flex;align-items:center;gap:12px;min-height:56px;padding:6px 12px;border-bottom:1px solid var(--line);cursor:pointer;background:var(--okbg)}
+.stu:first-child{border-radius:12px 12px 0 0}.stu:last-child{border-bottom:0;border-radius:0 0 12px 12px}
+.stu.absent{background:var(--badbg)}
+.stu .no{min-width:44px;font-weight:700;font-variant-numeric:tabular-nums}
+.stu .nm{flex:1}
+.stu input{position:absolute;opacity:0;pointer-events:none}
+.sw{width:56px;height:32px;border-radius:16px;background:var(--bad);position:relative;flex:none;transition:background .15s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;transition:transform .15s}
+.stu input:checked+.sw{background:var(--ok)}.stu input:checked+.sw::after{transform:translateX(24px)}
+.stu input:focus-visible+.sw{outline:3px solid var(--pri);outline-offset:2px}
+.state{width:70px;text-align:right;font-size:.85rem;font-weight:700}
+.stu .state{color:var(--ok)}.stu.absent .state{color:var(--bad)}
+.list{border:1px solid var(--line);border-radius:12px;overflow:hidden;margin-bottom:12px}
+pre.prev{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px;margin:8px 0 12px;white-space:pre-wrap;font:inherit}
+label.f{display:block;font-weight:600;margin:8px 0 4px}
+select,input[type=text],input[type=tel]{width:100%;min-height:48px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--card)}
+nav{position:fixed;left:0;right:0;bottom:0;background:var(--card);border-top:1px solid var(--line);display:flex;padding-bottom:env(safe-area-inset-bottom,0);z-index:9}
+nav button{flex:1;min-height:56px;border:0;background:none;font-weight:600;color:var(--mute);cursor:pointer}
+nav button.on{color:var(--pri);box-shadow:inset 0 3px 0 var(--pri)}
+.mute{color:var(--mute);font-size:.9rem}
+.adm{border-top:1px solid var(--line);padding-top:10px;margin-top:10px}
+table{width:100%;border-collapse:collapse}td,th{padding:6px 4px;border-bottom:1px solid var(--line);text-align:left}
+#toast{position:fixed;left:12px;right:12px;bottom:calc(76px + env(safe-area-inset-bottom,0));background:var(--ink);color:var(--bg);padding:12px 14px;border-radius:10px;z-index:20;display:none;max-width:616px;margin:0 auto}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<nav>
+  <button data-v="yoklama">Yoklama</button>
+  <button data-v="gecmis">Geçmiş</button>
+  <button data-v="ayarlar">Ayarlar</button>
+</nav>
+<div id="toast" role="status"></div>
+<input type="file" id="xl" accept=".xlsx,.xls" hidden>
+<input type="file" id="bk" accept=".json,application/json" hidden>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+"use strict";
+/* ---------- Yardımcılar ---------- */
+const SCHEMA = 1;
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad = n => String(n).padStart(2, "0");
+const todayISO = () => { const d = new Date(); return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
+const fmtDate = iso => iso.split("-").reverse().join(".");
+let toastT;
+function toast(m) { const t = $("#toast"); t.textContent = m; t.style.display = "block"; clearTimeout(toastT); toastT = setTimeout(() => t.style.display = "none", 3500); }
+function download(name, text, type) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], { type }));
+  a.download = name; document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+}
+
+/* ---------- Depolama: IndexedDB, olmazsa localStorage ---------- */
+const DB = {
+  db: null,
+  async init() {
+    try {
+      this.db = await new Promise((res, rej) => {
+        const r = indexedDB.open("yoklama", 1);
+        r.onupgradeneeded = () => r.result.createObjectStore("kv");
+        r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error);
+      });
+    } catch (e) { this.db = null; }
+  },
+  async get(k) {
+    if (this.db) try {
+      return await new Promise((res, rej) => { const q = this.db.transaction("kv").objectStore("kv").get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); });
+    } catch (e) {}
+    try { return JSON.parse(localStorage.getItem("yoklama_" + k)); } catch (e) { return undefined; }
+  },
+  async set(k, v) {
+    if (this.db) try {
+      await new Promise((res, rej) => { const t = this.db.transaction("kv", "readwrite"); t.objectStore("kv").put(v, k); t.oncomplete = res; t.onerror = () => rej(t.error); });
+      return true;
+    } catch (e) {}
+    try { localStorage.setItem("yoklama_" + k, JSON.stringify(v)); return true; }
+    catch (e) { toast("Kayıt yapılamadı. Tarayıcı depolaması dolu veya kapalı olabilir."); return false; }
+  }
+};
+
+/* ---------- Durum ve şema geçişi ---------- */
+const fresh = () => ({ v: SCHEMA, classes: {}, admins: [], defAdmin: null, records: {}, lastBackup: null });
+function migrate(s) {
+  if (!s || typeof s !== "object") return fresh();
+  if (!s.v) s.v = 1;
+  // İleride: while (s.v < SCHEMA) { ...eski veriyi dönüştür...; s.v++; }
+  const f = fresh();
+  for (const k in f) if (!(k in s)) s[k] = f[k];
+  return s;
+}
+let S = fresh();
+const save = () => DB.set("state", S);
+let view = "yoklama", cur = null, absent = new Set(), selAdmin = null;
+
+/* ---------- Excel okuma ---------- */
+const norm = h => String(h ?? "").toLocaleLowerCase("tr").replace(/ı/g, "i").replace(/ş/g, "s").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ö/g, "o").replace(/ç/g, "c").replace(/[^a-z]/g, "");
+function parseWorkbook(buf) {
+  if (typeof XLSX === "undefined") throw new Error("Excel kütüphanesi yüklenemedi. İnternet bağlantınızı kontrol edip sayfayı yenileyin.");
+  const wb = XLSX.read(buf, { type: "array" });
+  const out = {};
+  for (const name of wb.SheetNames) {
+    const rows = XLSX.utils.sheet_to_json(wb.Sheets[name], { header: 1, defval: "" });
+    if (!rows.length) continue;
+    const hd = rows[0].map(norm);
+    const iNo = hd.findIndex(h => h.includes("no"));
+    const iAd = hd.findIndex(h => h === "ad" || h === "adi");
+    const iSo = hd.findIndex(h => h.startsWith("soyad"));
+    if (iNo < 0 || iAd < 0) throw new Error(`"${name}" sayfasında "Okul No" ve "Adı" sütunları bulunamadı. İlk satır başlık olmalı: Okul No, Adı, Soyadı.`);
+    const list = [];
+    for (const r of rows.slice(1)) {
+      const no = String(r[iNo]).trim(); if (!no) continue;
+      list.push({ no: /^\d+$/.test(no) ? parseInt(no, 10) : no, ad: String(r[iAd]).trim(), soyad: iSo >= 0 ? String(r[iSo]).trim() : "" });
+    }
+    list.sort((a, b) => String(a.no).localeCompare(String(b.no), "tr", { numeric: true }));
+    if (list.length) out[name.trim()] = list;
+  }
+  if (!Object.keys(out).length) throw new Error("Dosyada öğrenci bulunamadı.");
+  return out;
+}
+$("#xl").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    S.classes = parseWorkbook(await f.arrayBuffer());
+    cur = null; await save(); render();
+    toast(Object.keys(S.classes).length + " sınıf yüklendi.");
+  } catch (err) { toast(err.message || "Dosya okunamadı."); }
+});
+
+/* ---------- Telefon ---------- */
+function normPhone(t) {
+  let d = String(t).replace(/\D/g, "");
+  if (d.startsWith("00")) d = d.slice(2);
+  if (d.length === 11 && d[0] === "0") d = "9" + d;
+  else if (d.length === 10 && d[0] === "5") d = "90" + d;
+  return /^\d{11,15}$/.test(d) ? d : null;
+}
+
+/* ---------- Mesaj ---------- */
+const sortedAbsent = () => [...absent].sort((a, b) => String(a).localeCompare(String(b), "tr", { numeric: true }));
+function message() {
+  const a = sortedAbsent();
+  return `YOKLAMA\nSınıf: ${cur}\nGelmeyen sayısı: ${a.length}\nGelmeyen öğrenci no: ${a.length ? a.join(", ") : "-"}`;
+}
+
+/* ---------- Görünümler ---------- */
+function render() {
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.v === view));
+  $("#app").innerHTML = view === "yoklama" ? vYoklama() : view === "gecmis" ? vGecmis() : vAyarlar();
+  if (view === "yoklama" && cur) updateYoklama();
+}
+function uploadCard(title) {
+  return `<div class="card"><h2>${title}</h2><p class="mute">Excel dosyasında her sayfa bir sınıf olmalı (6A, 6B, 8A...). Sütunlar: Okul No, Adı, Soyadı. İlk satır başlıktır.</p><button class="btn wide" data-a="pick">Excel dosyası seç</button></div>`;
+}
+function vYoklama() {
+  const names = Object.keys(S.classes).sort((a, b) => a.localeCompare(b, "tr", { numeric: true }));
+  if (!names.length) return `<h1>Yoklama</h1>` + uploadCard("Sınıf listesini yükle");
+  let h = `<div class="classes">` + names.map(n => `<button class="cls ${n === cur ? "on" : ""}" data-a="cls" data-c="${esc(n)}">${esc(n)}</button>`).join("") + `</div>`;
+  if (!cur) return h + `<p class="mute">Yoklama almak için sınıf seçin.</p>`;
+  h += `<div class="bar"><span class="g" id="sg"></span><span class="a" id="sa"></span></div><div class="list">`;
+  h += S.classes[cur].map(s => `<label class="stu" data-no="${esc(s.no)}"><span class="no">${esc(s.no)}</span><span class="nm">${esc(s.ad)} ${esc(s.soyad)}</span><span class="state"></span><input type="checkbox" data-a="tog" data-no="${esc(s.no)}"><span class="sw"></span></label>`).join("") + `</div>`;
+  h += `<div class="row" style="margin-bottom:12px"><button class="btn sec" data-a="all">Tümü geldi</button><button class="btn sec" data-a="reset">Sıfırla</button></div>`;
+  h += `<div class="card"><label class="f" for="adm">İdareci</label>`;
+  h += S.admins.length ? `<select id="adm">` + S.admins.map(a => `<option value="${a.id}" ${a.id === selAdmin ? "selected" : ""}>${esc(a.ad)}</option>`).join("") + `</select>` : `<p class="mute">Önce Ayarlar bölümünden idareci ekleyin.</p>`;
+  h += `<pre class="prev" id="prev"></pre><button class="btn wide" data-a="send">WhatsApp'ta Gönder</button></div>`;
+  return h;
+}
+function updateYoklama() {
+  const n = S.classes[cur].length;
+  $("#sg").textContent = "Mevcut: " + (n - absent.size);
+  $("#sa").textContent = "Gelmeyen: " + absent.size;
+  document.querySelectorAll(".stu").forEach(r => {
+    const ab = absent.has(isNaN(r.dataset.no) ? r.dataset.no : Number(r.dataset.no));
+    r.classList.toggle("absent", ab);
+    r.querySelector("input").checked = !ab;
+    r.querySelector(".state").textContent = ab ? "Gelmedi" : "Geldi";
+  });
+  $("#prev").textContent = message();
+}
+function vGecmis() {
+  const recs = Object.values(S.records).sort((a, b) => (b.date + b.cls).localeCompare(a.date + a.cls));
+  if (!recs.length) return `<h1>Geçmiş</h1><div class="card"><p class="mute">Henüz kayıt yok. WhatsApp'a gönderilen yoklamalar burada listelenir.</p></div>`;
+  const cnt = {};
+  recs.forEach(r => r.absent.forEach(no => { const k = r.cls + "|" + no; cnt[k] = (cnt[k] || 0) + 1; }));
+  const rows = Object.entries(cnt).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "tr", { numeric: true }));
+  const nm = (c, no) => { const s = (S.classes[c] || []).find(x => String(x.no) === String(no)); return s ? s.ad + " " + s.soyad : ""; };
+  return `<h1>Geçmiş</h1><div class="card"><h2>Devamsızlık sayıları</h2><table><tr><th>Sınıf</th><th>No</th><th>Öğrenci</th><th>Gün</th></tr>` +
+    rows.map(([k, v]) => { const [c, no] = k.split("|"); return `<tr><td>${esc(c)}</td><td>${esc(no)}</td><td>${esc(nm(c, no))}</td><td>${v}</td></tr>`; }).join("") + `</table></div>` +
+    `<div class="card"><h2>Yoklama kayıtları</h2><table><tr><th>Tarih</th><th>Sınıf</th><th>Gelmeyen no</th></tr>` +
+    recs.map(r => `<tr><td>${fmtDate(r.date)}</td><td>${esc(r.cls)}</td><td>${r.absent.length ? esc(r.absent.join(", ")) : "-"}</td></tr>`).join("") + `</table></div>` +
+    `<button class="btn wide" data-a="csv">CSV dışa aktar</button>`;
+}
+function vAyarlar() {
+  const cn = Object.keys(S.classes);
+  let h = `<h1>Ayarlar</h1><div class="card"><h2>İdareciler</h2>`;
+  h += S.admins.map(a => `<div class="adm" data-id="${a.id}"><input type="text" value="${esc(a.ad)}" aria-label="Ad" class="an"><input type="tel" value="${esc(a.tel)}" aria-label="Telefon" class="at" style="margin-top:6px"><label class="stu" style="background:none;border:0;min-height:44px;padding-left:0"><input type="radio" name="def" data-a="def" ${S.defAdmin === a.id ? "checked" : ""} style="position:static;opacity:1;width:22px;height:22px;pointer-events:auto"><span class="nm">Varsayılan idareci</span></label><div class="row"><button class="btn" data-a="asave">Kaydet</button><button class="btn bad" data-a="adel">Sil</button></div></div>`).join("");
+  h += `<div class="adm"><label class="f">Yeni idareci</label><input type="text" id="nn" placeholder="Ad (örn. Müdür Yardımcısı)"><input type="tel" id="nt" placeholder="Telefon (05XX XXX XX XX)" style="margin-top:6px"><button class="btn wide" style="margin-top:8px" data-a="aadd">İdareci ekle</button></div></div>`;
+  h += `<div class="card"><h2>Sınıf listesi</h2><p class="mute">${cn.length ? cn.map(c => esc(c) + " (" + S.classes[c].length + ")").join(", ") : "Liste yüklenmedi."} Yeni liste yüklenince geçmiş kayıtlar silinmez.</p><button class="btn wide" data-a="pick">Listeyi yenile (Excel yükle)</button></div>`;
+  h += `<div class="card"><h2>Yedek</h2><p class="mute">Son yedek: ${S.lastBackup ? fmtDate(S.lastBackup) : "hiç alınmadı"}. Telefon değiştirirseniz veya tarayıcı verisini silerseniz yedek dosyası tek kurtarma yoludur.</p><div class="row"><button class="btn" data-a="bkup">Yedek al</button><button class="btn sec" data-a="brest">Yedekten geri yükle</button></div></div>`;
+  return h;
+}
+
+/* ---------- Olaylar ---------- */
+document.querySelector("nav").addEventListener("click", e => { const b = e.target.closest("button"); if (b) { view = b.dataset.v; render(); window.scrollTo(0, 0); } });
+document.addEventListener("click", async e => {
+  const el = e.target.closest("[data-a]"); if (!el || el.tagName === "INPUT") return;
+  const a = el.dataset.a;
+  if (a === "pick") $("#xl").click();
+  else if (a === "cls") {
+    cur = el.dataset.c;
+    const r = S.records[todayISO() + "|" + cur];
+    absent = new Set(r ? r.absent : []);
+    if (r) toast("Bugünkü kayıt açıldı, düzenleyebilirsiniz.");
+    selAdmin = selAdmin || S.defAdmin || (S.admins[0] && S.admins[0].id);
+    render();
+  }
+  else if (a === "all") { absent.clear(); updateYoklama(); }
+  else if (a === "reset") { absent.clear(); updateYoklama(); }
+  else if (a === "send") {
+    const ad = S.admins.find(x => x.id === ($("#adm") ? $("#adm").value : selAdmin));
+    if (!ad) return toast("Önce Ayarlar bölümünden idareci ekleyin.");
+    const key = todayISO() + "|" + cur;
+    S.records[key] = { date: todayISO(), cls: cur, absent: sortedAbsent() };
+    await save();
+    window.open("https://wa.me/" + ad.tel + "?text=" + encodeURIComponent(message()), "_blank");
+  }
+  else if (a === "aadd") {
+    const ad = $("#nn").value.trim(), tel = normPhone($("#nt").value);
+    if (!ad) return toast("İdareci adını yazın.");
+    if (!tel) return toast("Telefon geçersiz. Örnek: 0532 123 45 67");
+    const id = "a" + Date.now();
+    S.admins.push({ id, ad, tel }); if (!S.defAdmin) S.defAdmin = id;
+    await save(); render(); toast("İdareci eklendi.");
+  }
+  else if (a === "asave" || a === "adel") {
+    const box = el.closest(".adm"), id = box.dataset.id;
+    if (a === "adel") {
+      if (!confirm("Bu idareci silinsin mi?")) return;
+      S.admins = S.admins.filter(x => x.id !== id);
+      if (S.defAdmin === id) S.defAdmin = S.admins[0] ? S.admins[0].id : null;
+      if (selAdmin === id) selAdmin = S.defAdmin;
+    } else {
+      const ad = box.querySelector(".an").value.trim(), tel = normPhone(box.querySelector(".at").value);
+      if (!ad) return toast("İdareci adını yazın.");
+      if (!tel) return toast("Telefon geçersiz. Örnek: 0532 123 45 67");
+      const x = S.admins.find(x => x.id === id); x.ad = ad; x.tel = tel;
+    }
+    await save(); render(); toast(a === "adel" ? "İdareci silindi." : "Kaydedildi.");
+  }
+  else if (a === "bkup") {
+    S.lastBackup = todayISO(); await save();
+    download("yoklama-yedek-" + todayISO() + ".json", JSON.stringify(S), "application/json");
+    render();
+  }
+  else if (a === "brest") $("#bk").click();
+  else if (a === "csv") {
+    const rows = [["Tarih", "Sınıf", "Gelmeyen sayısı", "Gelmeyen öğrenci no"]];
+    Object.values(S.records).sort((x, y) => (x.date + x.cls).localeCompare(y.date + y.cls)).forEach(r => rows.push([fmtDate(r.date), r.cls, r.absent.length, r.absent.join(" ")]));
+    download("yoklama-" + todayISO() + ".csv", "\ufeff" + rows.map(r => r.join(";")).join("\r\n"), "text/csv;charset=utf-8");
+  }
+});
+document.addEventListener("change", async e => {
+  const el = e.target;
+  if (el.dataset.a === "tog") {
+    const no = isNaN(el.dataset.no) ? el.dataset.no : Number(el.dataset.no);
+    el.checked ? absent.delete(no) : absent.add(no); updateYoklama();
+  } else if (el.dataset.a === "def") { S.defAdmin = el.closest(".adm").dataset.id; await save(); toast("Varsayılan idareci seçildi."); }
+  else if (el.id === "adm") selAdmin = el.value;
+});
+$("#bk").addEventListener("change", async e => {
+  const f = e.target.files[0]; e.target.value = ""; if (!f) return;
+  try {
+    const o = JSON.parse(await f.text());
+    if (!o || typeof o.classes !== "object" || !Array.isArray(o.admins) || typeof o.records !== "object") throw 0;
+    if (!confirm("Mevcut veriler yedekteki verilerle değiştirilecek. Devam edilsin mi?")) return;
+    S = migrate(o); cur = null; await save(); render(); toast("Yedek geri yüklendi.");
+  } catch (err) { toast("Yedek dosyası geçersiz."); }
+});
+
+/* ---------- Başlangıç ---------- */
+(async function () {
+  await DB.init();
+  S = migrate(await DB.get("state"));
+  selAdmin = S.defAdmin;
+  try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+  render();
+})();
+</script>
+</body>
+</html>
