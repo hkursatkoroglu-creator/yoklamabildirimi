@@ -177,7 +177,8 @@ function normPhone(t) {
 const sortedAbsent = () => [...absent].sort((a, b) => String(a).localeCompare(String(b), "tr", { numeric: true }));
 function message() {
   const a = sortedAbsent();
-  return `YOKLAMA\nSınıf: ${cur}\nGelmeyen sayısı: ${a.length}\nGelmeyen öğrenci no: ${a.length ? a.join(", ") : "-"}`;
+  if (!a.length) return `YOKLAMA\nSınıf: ${cur}\nSınıf tam`;
+  return `YOKLAMA\nSınıf: ${cur}\nGelmeyen sayısı: ${a.length}\nGelmeyen öğrenci no: ${a.join(", ")}`;
 }
 
 /* ---------- Görünümler ---------- */
