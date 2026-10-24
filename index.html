@@ -71,6 +71,8 @@ table{width:100%;border-collapse:collapse}td,th{padding:6px 4px;border-bottom:1p
 "use strict";
 /* ---------- Yardımcılar ---------- */
 const SCHEMA = 1;
+/* Yalıköy Ortaokulu sınıf listeleri (varsayılan). Ayarlar > "Listeyi yenile" ile Excel yüklenerek değiştirilebilir. */
+const VARSAYILAN = {"6A":[{"no":13,"ad":"AHMET METİN","soyad":"BADUR"},{"no":15,"ad":"BAHAR","soyad":"GÜNAYDIN"},{"no":18,"ad":"ELİF BEREN","soyad":"KALYONCU"},{"no":19,"ad":"ELİFNUR","soyad":"GÜNAYDIN"},{"no":20,"ad":"ELVİN NAZ","soyad":"USTA"},{"no":21,"ad":"EMİNE EBRAR","soyad":"BİLGİN"},{"no":26,"ad":"KERİM","soyad":"BİLGİN"},{"no":28,"ad":"MUSTAFA","soyad":"FİL"},{"no":30,"ad":"OSMAN ASAF","soyad":"KUM"},{"no":33,"ad":"SELVİ MEDİNE","soyad":"BİLGİN"},{"no":34,"ad":"TUĞÇE","soyad":"TAŞKIN"},{"no":36,"ad":"ZEHRA","soyad":"YILMAZ"},{"no":48,"ad":"POYRAZ","soyad":"GÖZEN"},{"no":72,"ad":"SÜMEYYE","soyad":"KUL"},{"no":103,"ad":"ÖMER","soyad":"YÜKSEL"},{"no":108,"ad":"MUHAMMET YAĞIZ","soyad":"BİLGİN"},{"no":212,"ad":"ADİL EROL","soyad":"İKİNCİ"}],"6B":[{"no":11,"ad":"AÇELYA","soyad":"BİLGİN"},{"no":12,"ad":"AHMET BARAN","soyad":"KUM"},{"no":14,"ad":"ALVİNA NUR","soyad":"FİL"},{"no":16,"ad":"BEREN","soyad":"KOCAMAN"},{"no":17,"ad":"CANER","soyad":"BAYRAKTAR"},{"no":25,"ad":"GAMZE","soyad":"BÜLBÜL"},{"no":27,"ad":"MUHAMMET ASAF","soyad":"FURUNCU"},{"no":29,"ad":"NAZLI","soyad":"ERKAN"},{"no":32,"ad":"RABİA","soyad":"BİLGİN"},{"no":35,"ad":"YAREN","soyad":"FİL"},{"no":37,"ad":"ZEYNEP ERVA","soyad":"GELDİ"},{"no":57,"ad":"ELA","soyad":"ZENCİRKIRAN"},{"no":61,"ad":"ÖMER","soyad":"KÖROĞLU"},{"no":71,"ad":"ÖZGÜR","soyad":"SEVENCAN"},{"no":122,"ad":"ÖMER ASAF","soyad":"BAHAR"},{"no":245,"ad":"ASEL","soyad":"GÜR"},{"no":391,"ad":"NİHAL","soyad":"DEMİR"}],"8A":[{"no":177,"ad":"EGEMEN","soyad":"ŞİRİN"},{"no":301,"ad":"ABDULKERİM","soyad":"BADUR"},{"no":305,"ad":"BEYZA NUR","soyad":"BİLGİN"},{"no":307,"ad":"BUSE AZELYA","soyad":"ERKAN"},{"no":309,"ad":"EFE MUSA","soyad":"GÜRDAL"},{"no":310,"ad":"ELİF SU","soyad":"BİLGİN"},{"no":312,"ad":"ETHEM AHMET","soyad":"TURUM"},{"no":313,"ad":"GÜLSÜM","soyad":"YILMAZ"},{"no":316,"ad":"HİLAL ALYA","soyad":"BİLGİN"},{"no":319,"ad":"MİRAÇ","soyad":"DİNÇ"},{"no":321,"ad":"ÖMER ASAF","soyad":"ÇOLAKOĞLU"},{"no":322,"ad":"ÖMER FARUK","soyad":"TEKNECİ"},{"no":324,"ad":"SEMANUR","soyad":"BAYRAKTAR"},{"no":330,"ad":"ZEYNEP","soyad":"KAYA"},{"no":628,"ad":"GÖKAY","soyad":"BOZBAŞ"}],"8B":[{"no":22,"ad":"KAAN","soyad":"ÇİÇEK"},{"no":67,"ad":"FEYZA","soyad":"CİHAN"},{"no":155,"ad":"MELİKE","soyad":"BAYRAM"},{"no":175,"ad":"EZGİ SU","soyad":"DİLLİ"},{"no":195,"ad":"OSMAN EFE","soyad":"AYDIN"},{"no":300,"ad":"ABDULKADİR","soyad":"BİLGİN"},{"no":302,"ad":"ALİ EYMEN","soyad":"KOYUNOĞLU"},{"no":303,"ad":"ALPEREN","soyad":"BÜLBÜL"},{"no":306,"ad":"BUĞLEM SU","soyad":"FURUNCU"},{"no":314,"ad":"HASRET","soyad":"BÜLBÜL"},{"no":315,"ad":"HATİCE MİRA","soyad":"BAŞ"},{"no":320,"ad":"MUSA","soyad":"BAYRAM"},{"no":323,"ad":"RUKİYE NAZ","soyad":"MİSİR"},{"no":325,"ad":"SİNEM NAZ","soyad":"KALYONCU"},{"no":326,"ad":"TUĞÇE","soyad":"CİVELEK"},{"no":327,"ad":"YAĞMUR DURU","soyad":"BAŞ"},{"no":328,"ad":"YİĞİT EFE","soyad":"FURUNCU"},{"no":329,"ad":"ZEHRA BETÜL","soyad":"ÇOLAKOĞLU"}]};
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const pad = n => String(n).padStart(2, "0");
@@ -125,7 +127,7 @@ function migrate(s) {
 }
 let S = fresh();
 const save = () => DB.set("state", S);
-let view = "yoklama", cur = null, absent = new Set(), selAdmin = null;
+let xlMode = "replace", view = "yoklama", cur = null, absent = new Set(), selAdmin = null;
 
 /* ---------- Excel okuma ---------- */
 const norm = h => String(h ?? "").toLocaleLowerCase("tr").replace(/ı/g, "i").replace(/ş/g, "s").replace(/ğ/g, "g").replace(/ü/g, "u").replace(/ö/g, "o").replace(/ç/g, "c").replace(/[^a-z]/g, "");
@@ -155,9 +157,10 @@ function parseWorkbook(buf) {
 $("#xl").addEventListener("change", async e => {
   const f = e.target.files[0]; e.target.value = ""; if (!f) return;
   try {
-    S.classes = parseWorkbook(await f.arrayBuffer());
+    const n = parseWorkbook(await f.arrayBuffer());
+    if (xlMode === "merge") Object.assign(S.classes, n); else S.classes = n;
     cur = null; await save(); render();
-    toast(Object.keys(S.classes).length + " sınıf yüklendi.");
+    toast(Object.keys(n).join(", ") + (xlMode === "merge" ? " sınıfı eklendi." : " listesi yüklendi."));
   } catch (err) { toast(err.message || "Dosya okunamadı."); }
 });
 
@@ -229,7 +232,9 @@ function vAyarlar() {
   let h = `<h1>Ayarlar</h1><div class="card"><h2>İdareciler</h2>`;
   h += S.admins.map(a => `<div class="adm" data-id="${a.id}"><input type="text" value="${esc(a.ad)}" aria-label="Ad" class="an"><input type="tel" value="${esc(a.tel)}" aria-label="Telefon" class="at" style="margin-top:6px"><label class="stu" style="background:none;border:0;min-height:44px;padding-left:0"><input type="radio" name="def" data-a="def" ${S.defAdmin === a.id ? "checked" : ""} style="position:static;opacity:1;width:22px;height:22px;pointer-events:auto"><span class="nm">Varsayılan idareci</span></label><div class="row"><button class="btn" data-a="asave">Kaydet</button><button class="btn bad" data-a="adel">Sil</button></div></div>`).join("");
   h += `<div class="adm"><label class="f">Yeni idareci</label><input type="text" id="nn" placeholder="Ad (örn. Müdür Yardımcısı)"><input type="tel" id="nt" placeholder="Telefon (05XX XXX XX XX)" style="margin-top:6px"><button class="btn wide" style="margin-top:8px" data-a="aadd">İdareci ekle</button></div></div>`;
-  h += `<div class="card"><h2>Sınıf listesi</h2><p class="mute">${cn.length ? cn.map(c => esc(c) + " (" + S.classes[c].length + ")").join(", ") : "Liste yüklenmedi."} Yeni liste yüklenince geçmiş kayıtlar silinmez.</p><button class="btn wide" data-a="pick">Listeyi yenile (Excel yükle)</button></div>`;
+  h += `<div class="card"><h2>Sınıf listeleri</h2>` +
+    cn.sort((a, b) => a.localeCompare(b, "tr", { numeric: true })).map(c => `<div class="row" style="align-items:center;margin-bottom:6px"><span style="flex:1"><b>${esc(c)}</b> <span class="mute">(${S.classes[c].length} öğrenci)</span></span><button class="btn bad" style="flex:none;min-height:44px" data-a="delcls" data-c="${esc(c)}">Sil</button></div>`).join("") +
+    `<p class="mute">5. ve 7. sınıfları eklemek için aynı yapıda (sayfa adı 5A, 7A gibi) bir Excel seçin. Mevcut sınıflar silinmez; aynı adlı sınıf varsa güncellenir. Geçmiş kayıtlar her durumda korunur.</p><div class="row"><button class="btn" data-a="addcls">Sınıf ekle (Excel)</button><button class="btn sec" data-a="pick">Tüm listeyi yenile</button></div></div>`;
   h += `<div class="card"><h2>Yedek</h2><p class="mute">Son yedek: ${S.lastBackup ? fmtDate(S.lastBackup) : "hiç alınmadı"}. Telefon değiştirirseniz veya tarayıcı verisini silerseniz yedek dosyası tek kurtarma yoludur.</p><div class="row"><button class="btn" data-a="bkup">Yedek al</button><button class="btn sec" data-a="brest">Yedekten geri yükle</button></div></div>`;
   return h;
 }
@@ -239,7 +244,13 @@ document.querySelector("nav").addEventListener("click", e => { const b = e.targe
 document.addEventListener("click", async e => {
   const el = e.target.closest("[data-a]"); if (!el || el.tagName === "INPUT") return;
   const a = el.dataset.a;
-  if (a === "pick") $("#xl").click();
+  if (a === "pick") { xlMode = "replace"; if (Object.keys(S.classes).length && !confirm("Tüm sınıf listeleri Excel'deki listelerle değiştirilecek. Devam edilsin mi?")) return; $("#xl").click(); }
+  else if (a === "addcls") { xlMode = "merge"; $("#xl").click(); }
+  else if (a === "delcls") {
+    const c = el.dataset.c;
+    if (!confirm(c + " sınıfı listeden silinsin mi? Geçmiş kayıtlar korunur.")) return;
+    delete S.classes[c]; if (cur === c) cur = null; await save(); render();
+  }
   else if (a === "cls") {
     cur = el.dataset.c;
     const r = S.records[todayISO() + "|" + cur];
@@ -315,6 +326,7 @@ $("#bk").addEventListener("change", async e => {
 (async function () {
   await DB.init();
   S = migrate(await DB.get("state"));
+  if (!Object.keys(S.classes).length) { S.classes = JSON.parse(JSON.stringify(VARSAYILAN)); await save(); }
   selAdmin = S.defAdmin;
   try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
   render();
